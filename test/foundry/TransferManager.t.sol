@@ -30,6 +30,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
     uint256 private constant amount1ERC1155 = 2;
     uint256 private constant tokenId2ERC1155 = 2;
     uint256 private constant amount2ERC1155 = 5;
+    uint256 private constant amountERC20 = 100e18;
 
     /**
      * 0. Internal helper functions
@@ -73,15 +74,13 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
-        uint256 amount = 100e18;
-
         vm.prank(_sender);
-        mockERC20.mint(_sender, amount);
+        mockERC20.mint(_sender, amountERC20);
 
         vm.prank(_transferrer);
-        transferManager.transferERC20(address(mockERC20), _sender, _recipient, amount);
+        transferManager.transferERC20(address(mockERC20), _sender, _recipient, amountERC20);
 
-        assertEq(mockERC20.balanceOf(_recipient), amount);
+        assertEq(mockERC20.balanceOf(_recipient), amountERC20);
     }
 
     function test_TransferSingleItemERC721() public {
@@ -175,7 +174,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         assertEq(mockERC1155.balanceOf(_recipient, tokenId2), amount2);
     }
 
-    function test_TransferBatchItemsAcrossCollectionERC721AndERC1155() public {
+    function test_TransferBatchItemsAcrossCollections() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -187,9 +186,11 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         assertEq(mockERC721.ownerOf(tokenIdERC721), _recipient);
         assertEq(mockERC1155.balanceOf(_recipient, tokenId1ERC1155), amount1ERC1155);
         assertEq(mockERC1155.balanceOf(_recipient, tokenId2ERC1155), amount2ERC1155);
+        assertEq(mockERC20.balanceOf(_recipient), amountERC20);
     }
 
-    function test_TransferBatchItemsAcrossCollectionERC721AndERC1155ByOwner() public asPrankedUser(_sender) {
+    function test_TransferBatchItemsAcrossCollectionsByOwner() public asPrankedUser(_sender) {
+        mockERC20.approve(address(transferManager), type(uint256).max);
         mockERC721.setApprovalForAll(address(transferManager), true);
         mockERC1155.setApprovalForAll(address(transferManager), true);
 
@@ -200,6 +201,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         assertEq(mockERC721.ownerOf(tokenIdERC721), _recipient);
         assertEq(mockERC1155.balanceOf(_recipient, tokenId1ERC1155), amount1ERC1155);
         assertEq(mockERC1155.balanceOf(_recipient, tokenId2ERC1155), amount2ERC1155);
+        assertEq(mockERC20.balanceOf(_recipient), amountERC20);
     }
 
     /**
@@ -274,7 +276,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferItemsERC1155(address(mockERC1155), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_TransferBatchItemsAcrossCollectionZeroLength() public {
+    function test_TransferBatchItemsAcrossCollectionsZeroLength() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -311,7 +313,55 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
     }
 
-    function test_TransferBatchItemsAcrossCollectionPerCollectionItemIdsLengthZero() public {
+    function test_TransferBatchItemsAcrossCollections_RevertIf_ERC20ItemIdsLengthIsNotZero() public {
+        _allowOperator(_transferrer);
+        _grantApprovals(_sender);
+
+        ITransferManager.BatchTransferItem[] memory items = _generateValidBatchTransferItems();
+        items[2].itemIds = new uint256[](1);
+
+        vm.prank(_transferrer);
+        vm.expectRevert(LengthsInvalid.selector);
+        transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
+    }
+
+    function test_TransferBatchItemsAcrossCollections_RevertIf_ERC20AmountsLengthIsNotOne() public {
+        _allowOperator(_transferrer);
+        _grantApprovals(_sender);
+
+        ITransferManager.BatchTransferItem[] memory items = _generateValidBatchTransferItems();
+        items[2].amounts = new uint256[](0);
+
+        vm.prank(_transferrer);
+        vm.expectRevert(LengthsInvalid.selector);
+        transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
+
+        items[2].amounts = new uint256[](2);
+
+        vm.prank(_transferrer);
+        vm.expectRevert(LengthsInvalid.selector);
+        transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
+    }
+
+    function test_TransferBatchItemsAcrossCollections_RevertIf_ERC20AmountIsZero() public {
+        _allowOperator(_transferrer);
+        _grantApprovals(_sender);
+
+        ITransferManager.BatchTransferItem[] memory items = _generateValidBatchTransferItems();
+        items[2].amounts[0] = 0;
+
+        vm.prank(_transferrer);
+        vm.expectRevert(AmountInvalid.selector);
+        transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
+
+        items[2].amounts = new uint256[](2);
+
+        vm.prank(_transferrer);
+        vm.expectRevert(LengthsInvalid.selector);
+        transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
+    }
+
+    function test_TransferBatchItemsAcrossCollectionsPerCollectionItemIdsLengthZero() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -521,12 +571,13 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
     }
 
     function _generateValidBatchTransferItems() private returns (BatchTransferItem[] memory items) {
-        items = new ITransferManager.BatchTransferItem[](2);
+        items = new ITransferManager.BatchTransferItem[](3);
 
         {
             mockERC721.mint(_sender, tokenIdERC721);
             mockERC1155.mint(_sender, tokenId1ERC1155, amount1ERC1155);
             mockERC1155.mint(_sender, tokenId2ERC1155, amount2ERC1155);
+            mockERC20.mint(_sender, amountERC20);
 
             uint256[] memory tokenIdsERC1155 = new uint256[](2);
             tokenIdsERC1155[0] = tokenId1ERC1155;
@@ -542,6 +593,9 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
             uint256[] memory amountsERC721 = new uint256[](1);
             amountsERC721[0] = 1;
 
+            uint256[] memory amountsERC20 = new uint256[](1);
+            amountsERC20[0] = amountERC20;
+
             items[0] = ITransferManager.BatchTransferItem({
                 tokenAddress: address(mockERC1155),
                 tokenType: TokenType.ERC1155,
@@ -553,6 +607,12 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
                 tokenType: TokenType.ERC721,
                 itemIds: tokenIdsERC721,
                 amounts: amountsERC721
+            });
+            items[2] = ITransferManager.BatchTransferItem({
+                tokenAddress: address(mockERC20),
+                tokenType: TokenType.ERC20,
+                itemIds: new uint256[](0),
+                amounts: amountsERC20
             });
         }
     }

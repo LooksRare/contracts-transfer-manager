@@ -169,16 +169,29 @@ contract TransferManager is
 
         for (uint256 i; i < itemsLength; ) {
             uint256[] calldata itemIds = items[i].itemIds;
-            uint256 itemIdsLengthForSingleCollection = itemIds.length;
+            uint256 itemIdsLengthForSingleTokenType = itemIds.length;
             uint256[] calldata amounts = items[i].amounts;
 
-            if (itemIdsLengthForSingleCollection == 0 || amounts.length != itemIdsLengthForSingleCollection) {
-                revert LengthsInvalid();
+            TokenType tokenType = items[i].tokenType;
+
+            if (tokenType == TokenType.ERC20) {
+                if (itemIdsLengthForSingleTokenType != 0 || amounts.length != 1) {
+                    revert LengthsInvalid();
+                }
+            } else {
+                if (itemIdsLengthForSingleTokenType == 0 || amounts.length != itemIdsLengthForSingleTokenType) {
+                    revert LengthsInvalid();
+                }
             }
 
-            TokenType tokenType = items[i].tokenType;
-            if (tokenType == TokenType.ERC721) {
-                for (uint256 j; j < itemIdsLengthForSingleCollection; ) {
+            if (tokenType == TokenType.ERC20) {
+                uint256 amount = amounts[0];
+                if (amount == 0) {
+                    revert AmountInvalid();
+                }
+                _executeERC20TransferFrom(items[i].tokenAddress, from, to, amount);
+            } else if (tokenType == TokenType.ERC721) {
+                for (uint256 j; j < itemIdsLengthForSingleTokenType; ) {
                     if (amounts[j] != 1) {
                         revert AmountInvalid();
                     }
@@ -188,7 +201,7 @@ contract TransferManager is
                     }
                 }
             } else if (tokenType == TokenType.ERC1155) {
-                for (uint256 j; j < itemIdsLengthForSingleCollection; ) {
+                for (uint256 j; j < itemIdsLengthForSingleTokenType; ) {
                     if (amounts[j] == 0) {
                         revert AmountInvalid();
                     }

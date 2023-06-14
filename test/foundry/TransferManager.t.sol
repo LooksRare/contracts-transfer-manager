@@ -515,13 +515,13 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
             amountsERC721[0] = 1;
 
             items[0] = ITransferManager.BatchTransferItem({
-                collection: address(mockERC1155),
+                tokenAddress: address(mockERC1155),
                 tokenType: TokenType.ERC1155,
                 itemIds: tokenIdsERC1155,
                 amounts: amountsERC1155
             });
             items[1] = ITransferManager.BatchTransferItem({
-                collection: address(mockERC721),
+                tokenAddress: address(mockERC721),
                 tokenType: TokenType.ERC721,
                 itemIds: tokenIdsERC721,
                 amounts: amountsERC721

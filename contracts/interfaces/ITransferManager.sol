@@ -11,13 +11,13 @@ import {TokenType} from "../enums/TokenType.sol";
 interface ITransferManager {
     /**
      * @notice This struct is only used for transferBatchItemsAcrossCollections.
-     * @param collection Collection address
+     * @param tokenAddress Token address
      * @param tokenType 0 for ERC721, 1 for ERC1155
      * @param itemIds Array of item ids to transfer
      * @param amounts Array of amounts to transfer
      */
     struct BatchTransferItem {
-        address collection;
+        address tokenAddress;
         TokenType tokenType;
         uint256[] itemIds;
         uint256[] amounts;

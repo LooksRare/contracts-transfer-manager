@@ -16,8 +16,9 @@ import {TokenType} from "./enums/TokenType.sol";
 /**
  * @title TransferManager
  * @notice This contract provides the transfer functions for ERC721/ERC1155 for contracts that require them.
- *         Collection type "0" refers to ERC721 transfer functions.
- *         Collection type "1" refers to ERC1155 transfer functions.
+ *         Token type "0" refers to ERC20 transfer functions.
+ *         Token type "1" refers to ERC721 transfer functions.
+ *         Token type "2" refers to ERC1155 transfer functions.
  * @dev "Safe" transfer functions for ERC721 are not implemented since they come with added gas costs
  *       to verify if the recipient is a contract as it requires verifying the receiver interface is valid.
  * @author LooksRare protocol team (👀,💎)
@@ -42,14 +43,14 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
 
     /**
      * @notice This function transfers items for a single ERC721 collection.
-     * @param collection Collection address
+     * @param tokenAddress Token address
      * @param from Sender address
      * @param to Recipient address
      * @param itemIds Array of itemIds
      * @param amounts Array of amounts
      */
     function transferItemsERC721(
-        address collection,
+        address tokenAddress,
         address from,
         address to,
         uint256[] calldata itemIds,
@@ -66,7 +67,7 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
             if (amounts[i] != 1) {
                 revert AmountInvalid();
             }
-            _executeERC721TransferFrom(collection, from, to, itemIds[i]);
+            _executeERC721TransferFrom(tokenAddress, from, to, itemIds[i]);
             unchecked {
                 ++i;
             }
@@ -75,7 +76,7 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
 
     /**
      * @notice This function transfers items for a single ERC1155 collection.
-     * @param collection Collection address
+     * @param tokenAddress Token address
      * @param from Sender address
      * @param to Recipient address
      * @param itemIds Array of itemIds
@@ -83,7 +84,7 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
      * @dev It does not allow batch transferring if from = msg.sender since native function should be used.
      */
     function transferItemsERC1155(
-        address collection,
+        address tokenAddress,
         address from,
         address to,
         uint256[] calldata itemIds,
@@ -101,7 +102,7 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
             if (amounts[0] == 0) {
                 revert AmountInvalid();
             }
-            _executeERC1155SafeTransferFrom(collection, from, to, itemIds[0], amounts[0]);
+            _executeERC1155SafeTransferFrom(tokenAddress, from, to, itemIds[0], amounts[0]);
         } else {
             for (uint256 i; i < length; ) {
                 if (amounts[i] == 0) {
@@ -112,12 +113,12 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
                     ++i;
                 }
             }
-            _executeERC1155SafeBatchTransferFrom(collection, from, to, itemIds, amounts);
+            _executeERC1155SafeBatchTransferFrom(tokenAddress, from, to, itemIds, amounts);
         }
     }
 
     /**
-     * @notice This function transfers items across an array of collections that can be both ERC721 and ERC1155.
+     * @notice This function transfers items across an array of tokens that can be ERC20, ERC721 and ERC1155.
      * @param items Array of BatchTransferItem
      * @param from Sender address
      * @param to Recipient address
@@ -152,7 +153,7 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
                     if (amounts[j] != 1) {
                         revert AmountInvalid();
                     }
-                    _executeERC721TransferFrom(items[i].collection, from, to, itemIds[j]);
+                    _executeERC721TransferFrom(items[i].tokenAddress, from, to, itemIds[j]);
                     unchecked {
                         ++j;
                     }
@@ -167,7 +168,7 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
                         ++j;
                     }
                 }
-                _executeERC1155SafeBatchTransferFrom(items[i].collection, from, to, itemIds, amounts);
+                _executeERC1155SafeBatchTransferFrom(items[i].tokenAddress, from, to, itemIds, amounts);
             }
 
             unchecked {

@@ -15,7 +15,7 @@ import {TestHelpers} from "./TestHelpers.sol";
 import {TestParameters} from "./TestParameters.sol";
 
 // Enums
-import {CollectionType} from "../../contracts/enums/CollectionType.sol";
+import {TokenType} from "../../contracts/enums/TokenType.sol";
 
 contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
     address[] public operators;
@@ -516,13 +516,13 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
 
             items[0] = ITransferManager.BatchTransferItem({
                 collection: address(mockERC1155),
-                collectionType: CollectionType.ERC1155,
+                tokenType: TokenType.ERC1155,
                 itemIds: tokenIdsERC1155,
                 amounts: amountsERC1155
             });
             items[1] = ITransferManager.BatchTransferItem({
                 collection: address(mockERC721),
-                collectionType: CollectionType.ERC721,
+                tokenType: TokenType.ERC721,
                 itemIds: tokenIdsERC721,
                 amounts: amountsERC721
             });

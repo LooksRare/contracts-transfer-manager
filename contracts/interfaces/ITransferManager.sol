@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 // Enums
-import {CollectionType} from "../enums/CollectionType.sol";
+import {TokenType} from "../enums/TokenType.sol";
 
 /**
  * @title ITransferManager
@@ -12,13 +12,13 @@ interface ITransferManager {
     /**
      * @notice This struct is only used for transferBatchItemsAcrossCollections.
      * @param collection Collection address
-     * @param collectionType 0 for ERC721, 1 for ERC1155
+     * @param tokenType 0 for ERC721, 1 for ERC1155
      * @param itemIds Array of item ids to transfer
      * @param amounts Array of amounts to transfer
      */
     struct BatchTransferItem {
         address collection;
-        CollectionType collectionType;
+        TokenType tokenType;
         uint256[] itemIds;
         uint256[] amounts;
     }

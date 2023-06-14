@@ -83,7 +83,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         assertEq(mockERC20.balanceOf(_recipient), amountERC20);
     }
 
-    function test_TransferSingleItemERC721() public {
+    function test_TransferItemsERC721_Single() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -103,7 +103,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         assertEq(mockERC721.ownerOf(itemId), _recipient);
     }
 
-    function test_TransferSingleItemERC1155() public {
+    function test_TransferItemsERC1155_Single() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -123,7 +123,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         assertEq(mockERC1155.balanceOf(_recipient, itemId), amount);
     }
 
-    function test_TransferBatchItemsERC721() public {
+    function test_TransferItemsERC721_Batch() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -147,7 +147,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         assertEq(mockERC721.ownerOf(tokenId2), _recipient);
     }
 
-    function test_TransferBatchItemsERC1155() public {
+    function test_TransferItemsERC1155_Batch() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -189,7 +189,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         assertEq(mockERC20.balanceOf(_recipient), amountERC20);
     }
 
-    function test_TransferBatchItemsAcrossCollectionsByOwner() public asPrankedUser(_sender) {
+    function test_TransferBatchItemsAcrossCollections_ByOwner() public asPrankedUser(_sender) {
         mockERC20.approve(address(transferManager), type(uint256).max);
         mockERC721.setApprovalForAll(address(transferManager), true);
         mockERC1155.setApprovalForAll(address(transferManager), true);
@@ -216,7 +216,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferERC20(address(mockERC20), _sender, _recipient, 0);
     }
 
-    function test_TransferItemsERC721AmountIsNotOne(uint256 amount) public {
+    function test_TransferItemsERC721_RevertIf_AmountIsNotOne(uint256 amount) public {
         vm.assume(amount != 1);
 
         _allowOperator(_transferrer);
@@ -236,7 +236,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferItemsERC721(address(mockERC721), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_TransferSingleItemERC1155AmountIsZero() public {
+    function test_TransferItemsERC1155_Single_RevertIf_AmountIsZero() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -254,7 +254,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferItemsERC1155(address(mockERC1155), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_TransferMultipleItemsERC1155AmountIsZero() public {
+    function test_TransferItemsERC1155_Multiple_RevertIf_AmountIsZero() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -276,7 +276,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferItemsERC1155(address(mockERC1155), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_TransferBatchItemsAcrossCollectionsZeroLength() public {
+    function test_TransferBatchItemsAcrossCollections_RevertIf_ZeroLength() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -287,7 +287,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
     }
 
-    function test_CannotBatchTransferIfERC721AmountIsNotOne(uint256 amount) public {
+    function test_TransferBatchItemsAcrossCollections_RevertIf_ERC721AmountIsNotOne(uint256 amount) public {
         vm.assume(amount != 1);
 
         _allowOperator(_transferrer);
@@ -301,7 +301,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
     }
 
-    function test_CannotBatchTransferIfERC1155AmountIsZero() public {
+    function test_TransferBatchItemsAcrossCollections_RevertIf_ERC1155AmountIsZero() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -361,7 +361,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
     }
 
-    function test_TransferBatchItemsAcrossCollectionsPerCollectionItemIdsLengthZero() public {
+    function test_TransferBatchItemsAcrossCollections_RevertIf_PerCollectionItemIdsLengthZero() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -374,7 +374,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
     }
 
-    function test_CannotTransferERC721IfOperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
+    function test_TransferItemsERC721_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -406,7 +406,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferItemsERC721(address(mockERC721), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_CannotTransferERC1155IfOperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
+    function test_TransferItemsERC1155_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -438,7 +438,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferItemsERC1155(address(mockERC1155), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_CannotBatchTransferIfOperatorApprovalsRevoked() public {
+    function test_TransferBatchItemsAcrossCollections_RevertIf_OperatorApprovalsRevoked() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -466,7 +466,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
     }
 
-    function test_CannotTransferERC721OrERC1155IfArrayLengthIs0() public {
+    function test_TransferItemsERC721OrERC1155_RevertIf_ArrayLengthIsZero() public {
         uint256[] memory emptyArrayUint256 = new uint256[](0);
 
         // 1. ERC721
@@ -490,7 +490,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         );
     }
 
-    function test_CannotTransferERC1155IfArrayLengthDiffers() public {
+    function test_TransferItemsERC1155_RevertIf_ArrayLengthDiffers() public {
         uint256[] memory itemIds = new uint256[](2);
         uint256[] memory amounts = new uint256[](3);
 
@@ -498,7 +498,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.transferItemsERC1155(address(mockERC1155), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_UserCannotGrantOrRevokeApprovalsIfArrayLengthIs0() public {
+    function test_GrantOrRevokeApprovals_RevertIf_ArrayLengthIs0() public {
         address[] memory emptyArrayAddresses = new address[](0);
 
         // 1. Grant approvals
@@ -510,32 +510,32 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.revokeApprovals(emptyArrayAddresses);
     }
 
-    function test_UserCannotGrantApprovalIfOperatorOperatorNotAllowed() public asPrankedUser(_owner) {
+    function test_GrantApproval_RevertIf_OperatorOperatorNotAllowed() public asPrankedUser(_owner) {
         address randomOperator = address(420);
         transferManager.allowOperator(randomOperator);
         vm.expectRevert(ITransferManager.OperatorAlreadyAllowed.selector);
         transferManager.allowOperator(randomOperator);
     }
 
-    function test_AllowOperatorNotOwner() public {
+    function test_AllowOperator_RevertIf_NotOwner() public {
         vm.expectRevert(IOwnableTwoSteps.NotOwner.selector);
         transferManager.allowOperator(address(0));
     }
 
-    function test_OwnerCannotallowOperatorIfOperatorAlreadyAllowed() public asPrankedUser(_owner) {
+    function test_AllowOperator_RevertIf_OperatorAlreadyAllowed() public asPrankedUser(_owner) {
         address randomOperator = address(420);
         transferManager.allowOperator(randomOperator);
         vm.expectRevert(ITransferManager.OperatorAlreadyAllowed.selector);
         transferManager.allowOperator(randomOperator);
     }
 
-    function test_OwnerCannotRemoveOperatorIfOperatorNotAllowed() public asPrankedUser(_owner) {
+    function test_RemoveOperator_RevertIf_OperatorNotAllowed() public asPrankedUser(_owner) {
         address notOperator = address(420);
         vm.expectRevert(ITransferManager.OperatorNotAllowed.selector);
         transferManager.removeOperator(notOperator);
     }
 
-    function test_UserCannotGrantApprovalsIfOperatorNotAllowed() public {
+    function test_GrantApprovals_RevertIf_OperatorNotAllowed() public {
         address[] memory approvedOperators = new address[](1);
         approvedOperators[0] = _transferrer;
 
@@ -544,7 +544,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.grantApprovals(approvedOperators);
     }
 
-    function test_UserCannotGrantApprovalsIfOperatorAlreadyApprovedByUser() public {
+    function test_GrantApprovals_RevertIf_OperatorAlreadyApprovedByUser() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -556,7 +556,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.grantApprovals(approvedOperators);
     }
 
-    function test_UserCannotRevokeApprovalsIfOperatorNotApprovedByUser() public {
+    function test_RevokeApprovals_RevertIf_OperatorNotApprovedByUser() public {
         address[] memory approvedOperators = new address[](1);
         approvedOperators[0] = _transferrer;
 
@@ -565,7 +565,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.revokeApprovals(approvedOperators);
     }
 
-    function test_RemoveOperatorNotOwner() public {
+    function test_RemoveOperator_RevertIf_NotOwner() public {
         vm.expectRevert(IOwnableTwoSteps.NotOwner.selector);
         transferManager.removeOperator(address(0));
     }

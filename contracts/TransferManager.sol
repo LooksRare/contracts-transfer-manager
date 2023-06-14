@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 // LooksRare unopinionated libraries
 import {OwnableTwoSteps} from "@looksrare/contracts-libs/contracts/OwnableTwoSteps.sol";
+import {LowLevelERC20Transfer} from "@looksrare/contracts-libs/contracts/lowLevelCallers/LowLevelERC20Transfer.sol";
 import {LowLevelERC721Transfer} from "@looksrare/contracts-libs/contracts/lowLevelCallers/LowLevelERC721Transfer.sol";
 import {LowLevelERC1155Transfer} from "@looksrare/contracts-libs/contracts/lowLevelCallers/LowLevelERC1155Transfer.sol";
 
@@ -23,7 +24,13 @@ import {TokenType} from "./enums/TokenType.sol";
  *       to verify if the recipient is a contract as it requires verifying the receiver interface is valid.
  * @author LooksRare protocol team (👀,💎)
  */
-contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelERC1155Transfer, OwnableTwoSteps {
+contract TransferManager is
+    ITransferManager,
+    LowLevelERC20Transfer,
+    LowLevelERC721Transfer,
+    LowLevelERC1155Transfer,
+    OwnableTwoSteps
+{
     /**
      * @notice This returns whether the user has approved the operator address.
      * The first address is the user and the second address is the operator (e.g. LooksRareProtocol).
@@ -40,6 +47,28 @@ contract TransferManager is ITransferManager, LowLevelERC721Transfer, LowLevelER
      * @param _owner Owner address
      */
     constructor(address _owner) OwnableTwoSteps(_owner) {}
+
+    /**
+     * @notice This function transfers ERC20 tokens.
+     * @param tokenAddress Token address
+     * @param from Sender address
+     * @param to Recipient address
+     * @param amount amount
+     */
+    function transferERC20(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 amount
+    ) external {
+        _isOperatorValidForTransfer(from, msg.sender);
+
+        if (amount == 0) {
+            revert AmountInvalid();
+        }
+
+        _executeERC20TransferFrom(tokenAddress, from, to, amount);
+    }
 
     /**
      * @notice This function transfers items for a single ERC721 collection.

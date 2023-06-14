@@ -9,6 +9,7 @@ import {ITransferManager, TransferManager} from "../../contracts/TransferManager
 import {AmountInvalid, LengthsInvalid} from "../../contracts/errors/SharedErrors.sol";
 
 // Mocks and other utils
+import {MockERC20} from "../mock/MockERC20.sol";
 import {MockERC721} from "../mock/MockERC721.sol";
 import {MockERC1155} from "../mock/MockERC1155.sol";
 import {TestHelpers} from "./TestHelpers.sol";
@@ -19,6 +20,7 @@ import {TokenType} from "../../contracts/enums/TokenType.sol";
 
 contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
     address[] public operators;
+    MockERC20 public mockERC20;
     MockERC721 public mockERC721;
     MockERC1155 public mockERC1155;
     TransferManager public transferManager;
@@ -34,6 +36,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
      */
 
     function _grantApprovals(address user) private asPrankedUser(user) {
+        mockERC20.approve(address(transferManager), type(uint256).max);
         mockERC721.setApprovalForAll(address(transferManager), true);
         mockERC1155.setApprovalForAll(address(transferManager), true);
         address[] memory approvedOperators = new address[](1);
@@ -53,6 +56,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
 
     function setUp() public asPrankedUser(_owner) {
         transferManager = new TransferManager(_owner);
+        mockERC20 = new MockERC20();
         mockERC721 = new MockERC721();
         mockERC1155 = new MockERC1155();
         operators.push(_transferrer);
@@ -64,6 +68,21 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
     /**
      * 1. Happy cases
      */
+
+    function test_TransferERC20() public {
+        _allowOperator(_transferrer);
+        _grantApprovals(_sender);
+
+        uint256 amount = 100e18;
+
+        vm.prank(_sender);
+        mockERC20.mint(_sender, amount);
+
+        vm.prank(_transferrer);
+        transferManager.transferERC20(address(mockERC20), _sender, _recipient, amount);
+
+        assertEq(mockERC20.balanceOf(_recipient), amount);
+    }
 
     function test_TransferSingleItemERC721() public {
         _allowOperator(_transferrer);
@@ -186,6 +205,15 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
     /**
      * 2. Revertion patterns
      */
+    function test_TransferERC20_RevertIf_AmountIsZero() public {
+        _allowOperator(_transferrer);
+        _grantApprovals(_sender);
+
+        vm.expectRevert(AmountInvalid.selector);
+        vm.prank(_transferrer);
+        transferManager.transferERC20(address(mockERC20), _sender, _recipient, 0);
+    }
+
     function test_TransferItemsERC721AmountIsNotOne(uint256 amount) public {
         vm.assume(amount != 1);
 

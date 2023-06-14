@@ -16,7 +16,7 @@ import {TokenType} from "./enums/TokenType.sol";
 
 /**
  * @title TransferManager
- * @notice This contract provides the transfer functions for ERC721/ERC1155 for contracts that require them.
+ * @notice This contract provides the transfer functions for ERC20/ERC721/ERC1155 for contracts that require them.
  *         Token type "0" refers to ERC20 transfer functions.
  *         Token type "1" refers to ERC721 transfer functions.
  *         Token type "2" refers to ERC1155 transfer functions.
@@ -33,7 +33,7 @@ contract TransferManager is
 {
     /**
      * @notice This returns whether the user has approved the operator address.
-     * The first address is the user and the second address is the operator (e.g. LooksRareProtocol).
+     * The first address is the user and the second address is the operator.
      */
     mapping(address => mapping(address => bool)) public hasUserApprovedOperator;
 

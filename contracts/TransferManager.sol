@@ -86,7 +86,7 @@ contract TransferManager is
         uint256[] calldata amounts
     ) external {
         uint256 length = itemIds.length;
-        if (length == 0) {
+        if (length == 0 || amounts.length != length) {
             revert LengthsInvalid();
         }
 

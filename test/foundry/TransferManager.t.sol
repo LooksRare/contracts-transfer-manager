@@ -490,9 +490,12 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         );
     }
 
-    function test_TransferItemsERC1155_RevertIf_ArrayLengthDiffers() public {
+    function test_TransferItemsERC721OrERC1155_RevertIf_ArrayLengthDiffers() public {
         uint256[] memory itemIds = new uint256[](2);
         uint256[] memory amounts = new uint256[](3);
+
+        vm.expectRevert(LengthsInvalid.selector);
+        transferManager.transferItemsERC721(address(mockERC721), _sender, _recipient, itemIds, amounts);
 
         vm.expectRevert(LengthsInvalid.selector);
         transferManager.transferItemsERC1155(address(mockERC1155), _sender, _recipient, itemIds, amounts);

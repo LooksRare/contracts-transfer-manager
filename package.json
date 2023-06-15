@@ -1,6 +1,6 @@
 {
   "name": "@looksrare/contracts-transfer-manager",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "LooksRare transfer manager smart contract",
   "author": "LooksRare",
   "license": "MIT",

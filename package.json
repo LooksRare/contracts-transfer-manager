@@ -33,6 +33,14 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
+  "files": [
+    "/abis/*.json",
+    "/contracts/*.sol",
+    "/contracts/enums/*.sol",
+    "/contracts/errors/*.sol",
+    "/contracts/interfaces/*.sol",
+    "/contracts/libraries/*.sol"
+  ],
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",

@@ -18,7 +18,12 @@ import {TestParameters} from "./TestParameters.sol";
 // Enums
 import {TokenType} from "../../contracts/enums/TokenType.sol";
 
-contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
+contract TransferManagerTest is TestHelpers, TestParameters {
+    event ApprovalsGranted(address user, address[] operators);
+    event ApprovalsRemoved(address user, address[] operators);
+    event OperatorAllowed(address operator);
+    event OperatorRemoved(address operator);
+
     address[] public operators;
     MockERC20 public mockERC20;
     MockERC721 public mockERC721;
@@ -573,7 +578,7 @@ contract TransferManagerTest is ITransferManager, TestHelpers, TestParameters {
         transferManager.removeOperator(address(0));
     }
 
-    function _generateValidBatchTransferItems() private returns (BatchTransferItem[] memory items) {
+    function _generateValidBatchTransferItems() private returns (ITransferManager.BatchTransferItem[] memory items) {
         items = new ITransferManager.BatchTransferItem[](3);
 
         {

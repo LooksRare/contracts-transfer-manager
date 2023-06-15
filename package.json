@@ -1,13 +1,13 @@
 {
-  "name": "solidity-template",
+  "name": "@looksrare/contracts-transfer-manager",
   "version": "1.0.0",
-  "description": "Solidity smart contracts template ",
-  "main": "index.js",
+  "description": "LooksRare transfer manager smart contract",
   "author": "LooksRare",
   "license": "MIT",
-  "private": true,
   "keywords": [
-    "looksrare"
+    "ethereum",
+    "looksrare",
+    "solidity"
   ],
   "homepage": "https://looksrare.org/",
   "bugs": "https://github.com/LooksRare/solidity-template/issues",
@@ -22,10 +22,15 @@
     "format:write": "prettier --write '**/*.{js,jsx,ts,tsx,json,yaml,md}'",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "prepare": "husky install",
+    "prepublishOnly": "yarn compile",
     "test": "hardhat test",
     "test:gas": "REPORT_GAS=true hardhat test",
     "test:forge": "forge test",
     "test:coverage": "hardhat coverage && hardhat compile --force"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",

@@ -78,4 +78,93 @@ interface ITransferManager {
      *         approved by the 'from' user.
      */
     error TransferCallerInvalid();
+
+    /**
+     * @notice This function transfers ERC20 tokens.
+     * @param tokenAddress Token address
+     * @param from Sender address
+     * @param to Recipient address
+     * @param amount amount
+     */
+    function transferERC20(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 amount
+    ) external;
+
+    /**
+     * @notice This function transfers items for a single ERC721 collection.
+     * @param tokenAddress Token address
+     * @param from Sender address
+     * @param to Recipient address
+     * @param itemIds Array of itemIds
+     * @param amounts Array of amounts
+     */
+    function transferItemsERC721(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256[] calldata itemIds,
+        uint256[] calldata amounts
+    ) external;
+
+    /**
+     * @notice This function transfers items for a single ERC1155 collection.
+     * @param tokenAddress Token address
+     * @param from Sender address
+     * @param to Recipient address
+     * @param itemIds Array of itemIds
+     * @param amounts Array of amounts
+     * @dev It does not allow batch transferring if from = msg.sender since native function should be used.
+     */
+    function transferItemsERC1155(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256[] calldata itemIds,
+        uint256[] calldata amounts
+    ) external;
+
+    /**
+     * @notice This function transfers items across an array of tokens that can be ERC20, ERC721 and ERC1155.
+     * @param items Array of BatchTransferItem
+     * @param from Sender address
+     * @param to Recipient address
+     */
+    function transferBatchItemsAcrossCollections(
+        BatchTransferItem[] calldata items,
+        address from,
+        address to
+    ) external;
+
+    /**
+     * @notice This function allows a user to grant approvals for an array of operators.
+     *         Users cannot grant approvals if the operator is not allowed by this contract's owner.
+     * @param operators Array of operator addresses
+     * @dev Each operator address must be globally allowed to be approved.
+     */
+    function grantApprovals(address[] calldata operators) external;
+
+    /**
+     * @notice This function allows a user to revoke existing approvals for an array of operators.
+     * @param operators Array of operator addresses
+     * @dev Each operator address must be approved at the user level to be revoked.
+     */
+    function revokeApprovals(address[] calldata operators) external;
+
+    /**
+     * @notice This function allows an operator to be added for the shared transfer system.
+     *         Once the operator is allowed, users can grant NFT approvals to this operator.
+     * @param operator Operator address to allow
+     * @dev Only callable by owner.
+     */
+    function allowOperator(address operator) external;
+
+    /**
+     * @notice This function allows the user to remove an operator for the shared transfer system.
+     * @param operator Operator address to remove
+     * @dev Only callable by owner.
+     */
+    function removeOperator(address operator) external;
 }

@@ -49,11 +49,7 @@ contract TransferManager is
     constructor(address _owner) OwnableTwoSteps(_owner) {}
 
     /**
-     * @notice This function transfers ERC20 tokens.
-     * @param tokenAddress Token address
-     * @param from Sender address
-     * @param to Recipient address
-     * @param amount amount
+     * @inheritdoc ITransferManager
      */
     function transferERC20(
         address tokenAddress,
@@ -71,12 +67,7 @@ contract TransferManager is
     }
 
     /**
-     * @notice This function transfers items for a single ERC721 collection.
-     * @param tokenAddress Token address
-     * @param from Sender address
-     * @param to Recipient address
-     * @param itemIds Array of itemIds
-     * @param amounts Array of amounts
+     * @inheritdoc ITransferManager
      */
     function transferItemsERC721(
         address tokenAddress,
@@ -104,13 +95,7 @@ contract TransferManager is
     }
 
     /**
-     * @notice This function transfers items for a single ERC1155 collection.
-     * @param tokenAddress Token address
-     * @param from Sender address
-     * @param to Recipient address
-     * @param itemIds Array of itemIds
-     * @param amounts Array of amounts
-     * @dev It does not allow batch transferring if from = msg.sender since native function should be used.
+     * @inheritdoc ITransferManager
      */
     function transferItemsERC1155(
         address tokenAddress,
@@ -147,10 +132,7 @@ contract TransferManager is
     }
 
     /**
-     * @notice This function transfers items across an array of tokens that can be ERC20, ERC721 and ERC1155.
-     * @param items Array of BatchTransferItem
-     * @param from Sender address
-     * @param to Recipient address
+     * @inheritdoc ITransferManager
      */
     function transferBatchItemsAcrossCollections(
         BatchTransferItem[] calldata items,
@@ -220,10 +202,7 @@ contract TransferManager is
     }
 
     /**
-     * @notice This function allows a user to grant approvals for an array of operators.
-     *         Users cannot grant approvals if the operator is not allowed by this contract's owner.
-     * @param operators Array of operator addresses
-     * @dev Each operator address must be globally allowed to be approved.
+     * @inheritdoc ITransferManager
      */
     function grantApprovals(address[] calldata operators) external {
         uint256 length = operators.length;
@@ -254,9 +233,7 @@ contract TransferManager is
     }
 
     /**
-     * @notice This function allows a user to revoke existing approvals for an array of operators.
-     * @param operators Array of operator addresses
-     * @dev Each operator address must be approved at the user level to be revoked.
+     * @inheritdoc ITransferManager
      */
     function revokeApprovals(address[] calldata operators) external {
         uint256 length = operators.length;
@@ -281,10 +258,7 @@ contract TransferManager is
     }
 
     /**
-     * @notice This function allows an operator to be added for the shared transfer system.
-     *         Once the operator is allowed, users can grant NFT approvals to this operator.
-     * @param operator Operator address to allow
-     * @dev Only callable by owner.
+     * @inheritdoc ITransferManager
      */
     function allowOperator(address operator) external onlyOwner {
         if (isOperatorAllowed[operator]) {
@@ -297,9 +271,7 @@ contract TransferManager is
     }
 
     /**
-     * @notice This function allows the user to remove an operator for the shared transfer system.
-     * @param operator Operator address to remove
-     * @dev Only callable by owner.
+     * @inheritdoc ITransferManager
      */
     function removeOperator(address operator) external onlyOwner {
         if (!isOperatorAllowed[operator]) {

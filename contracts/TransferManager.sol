@@ -69,7 +69,7 @@ contract TransferManager is
     /**
      * @inheritdoc ITransferManager
      */
-    function transferERC721(
+    function transferItemERC721(
         address tokenAddress,
         address from,
         address to,
@@ -110,7 +110,7 @@ contract TransferManager is
     /**
      * @inheritdoc ITransferManager
      */
-    function transferERC1155(
+    function transferItemERC1155(
         address tokenAddress,
         address from,
         address to,

@@ -100,7 +100,7 @@ interface ITransferManager {
      * @param to Recipient address
      * @param itemId Item ID
      */
-    function transferERC721(
+    function transferItemERC721(
         address tokenAddress,
         address from,
         address to,
@@ -131,7 +131,7 @@ interface ITransferManager {
      * @param itemId Item ID
      * @param amount Amount
      */
-    function transferERC1155(
+    function transferItemERC1155(
         address tokenAddress,
         address from,
         address to,

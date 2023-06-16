@@ -88,7 +88,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         assertEq(mockERC20.balanceOf(_recipient), amountERC20);
     }
 
-    function test_TransferERC721() public {
+    function test_TransferItemERC721() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -98,7 +98,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         mockERC721.mint(_sender, itemId);
 
         vm.prank(_transferrer);
-        transferManager.transferERC721(address(mockERC721), _sender, _recipient, itemId);
+        transferManager.transferItemERC721(address(mockERC721), _sender, _recipient, itemId);
 
         assertEq(mockERC721.ownerOf(itemId), _recipient);
     }
@@ -123,7 +123,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         assertEq(mockERC721.ownerOf(itemId), _recipient);
     }
 
-    function test_TransferERC1155() public {
+    function test_TransferItemERC1155() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -133,7 +133,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         mockERC1155.mint(_sender, itemId, amount);
 
         vm.prank(_transferrer);
-        transferManager.transferERC1155(address(mockERC1155), _sender, _recipient, itemId, amount);
+        transferManager.transferItemERC1155(address(mockERC1155), _sender, _recipient, itemId, amount);
 
         assertEq(mockERC1155.balanceOf(_recipient, itemId), amount);
     }
@@ -271,7 +271,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         transferManager.transferItemsERC721(address(mockERC721), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_TransferERC1155_Single_RevertIf_AmountIsZero() public {
+    function test_TransferItemERC1155_Single_RevertIf_AmountIsZero() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -281,7 +281,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
 
         vm.expectRevert(AmountInvalid.selector);
         vm.prank(_transferrer);
-        transferManager.transferERC1155(address(mockERC1155), _sender, _recipient, itemId, 0);
+        transferManager.transferItemERC1155(address(mockERC1155), _sender, _recipient, itemId, 0);
     }
 
     function test_TransferItemsERC1155_Single_RevertIf_AmountIsZero() public {
@@ -422,7 +422,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
     }
 
-    function test_TransferERC721_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
+    function test_TransferItemERC721_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -436,7 +436,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
 
         vm.prank(_transferrer);
         vm.expectRevert(ITransferManager.TransferCallerInvalid.selector);
-        transferManager.transferERC721(address(mockERC721), _sender, _recipient, itemId);
+        transferManager.transferItemERC721(address(mockERC721), _sender, _recipient, itemId);
 
         // 2. Sender grants again approvals but owner removes the operators
         _grantApprovals(_sender);
@@ -447,7 +447,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
 
         vm.prank(_transferrer);
         vm.expectRevert(ITransferManager.TransferCallerInvalid.selector);
-        transferManager.transferERC721(address(mockERC721), _sender, _recipient, itemId);
+        transferManager.transferItemERC721(address(mockERC721), _sender, _recipient, itemId);
     }
 
     function test_TransferItemsERC721_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
@@ -482,7 +482,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         transferManager.transferItemsERC721(address(mockERC721), _sender, _recipient, itemIds, amounts);
     }
 
-    function test_TransferERC1155_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
+    function test_TransferItemERC1155_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
 
@@ -497,7 +497,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
 
         vm.prank(_transferrer);
         vm.expectRevert(ITransferManager.TransferCallerInvalid.selector);
-        transferManager.transferERC1155(address(mockERC1155), _sender, _recipient, itemId, amount);
+        transferManager.transferItemERC1155(address(mockERC1155), _sender, _recipient, itemId, amount);
 
         // 2. Sender grants again approvals but owner removes the operators
         _grantApprovals(_sender);
@@ -508,7 +508,7 @@ contract TransferManagerTest is TestHelpers, TestParameters {
 
         vm.prank(_transferrer);
         vm.expectRevert(ITransferManager.TransferCallerInvalid.selector);
-        transferManager.transferERC1155(address(mockERC1155), _sender, _recipient, itemId, amount);
+        transferManager.transferItemERC1155(address(mockERC1155), _sender, _recipient, itemId, amount);
     }
 
     function test_TransferItemsERC1155_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {

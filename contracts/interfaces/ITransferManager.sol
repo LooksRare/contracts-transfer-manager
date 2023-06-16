@@ -124,6 +124,22 @@ interface ITransferManager {
     ) external;
 
     /**
+     * @notice This function transfers a single item for a single ERC1155 collection.
+     * @param tokenAddress Token address
+     * @param from Sender address
+     * @param to Recipient address
+     * @param itemId Item ID
+     * @param amount Amount
+     */
+    function transferERC1155(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 itemId,
+        uint256 amount
+    ) external;
+
+    /**
      * @notice This function transfers items for a single ERC1155 collection.
      * @param tokenAddress Token address
      * @param from Sender address

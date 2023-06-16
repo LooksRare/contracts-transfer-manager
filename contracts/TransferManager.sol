@@ -110,6 +110,23 @@ contract TransferManager is
     /**
      * @inheritdoc ITransferManager
      */
+    function transferERC1155(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 itemId,
+        uint256 amount
+    ) external {
+        _isOperatorValidForTransfer(from, msg.sender);
+        if (amount == 0) {
+            revert AmountInvalid();
+        }
+        _executeERC1155SafeTransferFrom(tokenAddress, from, to, itemId, amount);
+    }
+
+    /**
+     * @inheritdoc ITransferManager
+     */
     function transferItemsERC1155(
         address tokenAddress,
         address from,

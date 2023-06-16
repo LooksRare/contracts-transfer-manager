@@ -88,6 +88,21 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         assertEq(mockERC20.balanceOf(_recipient), amountERC20);
     }
 
+    function test_TransferERC721() public {
+        _allowOperator(_transferrer);
+        _grantApprovals(_sender);
+
+        uint256 itemId = 500;
+
+        vm.prank(_sender);
+        mockERC721.mint(_sender, itemId);
+
+        vm.prank(_transferrer);
+        transferManager.transferERC721(address(mockERC721), _sender, _recipient, itemId);
+
+        assertEq(mockERC721.ownerOf(itemId), _recipient);
+    }
+
     function test_TransferItemsERC721_Single() public {
         _allowOperator(_transferrer);
         _grantApprovals(_sender);
@@ -377,6 +392,34 @@ contract TransferManagerTest is TestHelpers, TestParameters {
         vm.prank(_transferrer);
         vm.expectRevert(LengthsInvalid.selector);
         transferManager.transferBatchItemsAcrossCollections(items, _sender, _recipient);
+    }
+
+    function test_TransferERC721_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {
+        _allowOperator(_transferrer);
+        _grantApprovals(_sender);
+
+        // 1. User revokes the operator
+        vm.prank(_sender);
+        vm.expectEmit({checkTopic1: false, checkTopic2: false, checkTopic3: false, checkData: true});
+        emit ApprovalsRemoved(_sender, operators);
+        transferManager.revokeApprovals(operators);
+
+        uint256 itemId = 500;
+
+        vm.prank(_transferrer);
+        vm.expectRevert(ITransferManager.TransferCallerInvalid.selector);
+        transferManager.transferERC721(address(mockERC721), _sender, _recipient, itemId);
+
+        // 2. Sender grants again approvals but owner removes the operators
+        _grantApprovals(_sender);
+        vm.prank(_owner);
+        vm.expectEmit({checkTopic1: false, checkTopic2: false, checkTopic3: false, checkData: true});
+        emit OperatorRemoved(_transferrer);
+        transferManager.removeOperator(_transferrer);
+
+        vm.prank(_transferrer);
+        vm.expectRevert(ITransferManager.TransferCallerInvalid.selector);
+        transferManager.transferERC721(address(mockERC721), _sender, _recipient, itemId);
     }
 
     function test_TransferItemsERC721_RevertIf_OperatorApprovalsRevokedByUserOrOperatorRemovedByOwner() public {

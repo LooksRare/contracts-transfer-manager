@@ -69,6 +69,19 @@ contract TransferManager is
     /**
      * @inheritdoc ITransferManager
      */
+    function transferERC721(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 itemId
+    ) external {
+        _isOperatorValidForTransfer(from, msg.sender);
+        _executeERC721TransferFrom(tokenAddress, from, to, itemId);
+    }
+
+    /**
+     * @inheritdoc ITransferManager
+     */
     function transferItemsERC721(
         address tokenAddress,
         address from,

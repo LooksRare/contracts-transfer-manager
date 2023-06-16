@@ -69,6 +69,19 @@ contract TransferManager is
     /**
      * @inheritdoc ITransferManager
      */
+    function transferItemERC721(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 itemId
+    ) external {
+        _isOperatorValidForTransfer(from, msg.sender);
+        _executeERC721TransferFrom(tokenAddress, from, to, itemId);
+    }
+
+    /**
+     * @inheritdoc ITransferManager
+     */
     function transferItemsERC721(
         address tokenAddress,
         address from,
@@ -92,6 +105,23 @@ contract TransferManager is
                 ++i;
             }
         }
+    }
+
+    /**
+     * @inheritdoc ITransferManager
+     */
+    function transferItemERC1155(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 itemId,
+        uint256 amount
+    ) external {
+        _isOperatorValidForTransfer(from, msg.sender);
+        if (amount == 0) {
+            revert AmountInvalid();
+        }
+        _executeERC1155SafeTransferFrom(tokenAddress, from, to, itemId, amount);
     }
 
     /**

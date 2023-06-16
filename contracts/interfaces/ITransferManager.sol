@@ -94,6 +94,20 @@ interface ITransferManager {
     ) external;
 
     /**
+     * @notice This function transfers a single item for a single ERC721 collection.
+     * @param tokenAddress Token address
+     * @param from Sender address
+     * @param to Recipient address
+     * @param itemId Item ID
+     */
+    function transferItemERC721(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 itemId
+    ) external;
+
+    /**
      * @notice This function transfers items for a single ERC721 collection.
      * @param tokenAddress Token address
      * @param from Sender address
@@ -107,6 +121,22 @@ interface ITransferManager {
         address to,
         uint256[] calldata itemIds,
         uint256[] calldata amounts
+    ) external;
+
+    /**
+     * @notice This function transfers a single item for a single ERC1155 collection.
+     * @param tokenAddress Token address
+     * @param from Sender address
+     * @param to Recipient address
+     * @param itemId Item ID
+     * @param amount Amount
+     */
+    function transferItemERC1155(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 itemId,
+        uint256 amount
     ) external;
 
     /**

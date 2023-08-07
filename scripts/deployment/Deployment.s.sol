@@ -10,6 +10,17 @@ import {TransferManager} from "../../contracts/TransferManager.sol";
 // Create2 factory interface
 import {IImmutableCreate2Factory} from "../../contracts/interfaces/IImmutableCreate2Factory.sol";
 
+/**
+ * @dev
+ * Use
+ * forge create --rpc-url $SEPOLIA_RPC_URL \
+ *     --private-key $TESTNET_KEY \
+ *     --constructor-args 0xF332533bF5d0aC462DC8511067A8122b4DcE2B57 \
+ *     --etherscan-api-key $ETHERSCAN_API_KEY \
+ *     --verify contracts/TransferManager.sol:TransferManager
+
+ * for testnet deployment
+ */
 contract Deployment is Script {
     IImmutableCreate2Factory private constant IMMUTABLE_CREATE2_FACTORY =
         IImmutableCreate2Factory(0x0000000000FFe8B47B3e2130213B802212439497);
@@ -18,33 +29,20 @@ contract Deployment is Script {
 
     function run() external {
         uint256 chainId = block.chainid;
-        uint256 deployerPrivateKey;
 
-        address owner;
-
-        if (chainId == 1) {
-            deployerPrivateKey = vm.envUint("MAINNET_KEY");
-            owner = 0xB5a9e5a319c7fDa551a30BE592c77394bF935c6f;
-        } else if (chainId == 5) {
-            deployerPrivateKey = vm.envUint("TESTNET_KEY");
-            owner = 0xF332533bF5d0aC462DC8511067A8122b4DcE2B57;
-        } else if (chainId == 11155111) {
-            deployerPrivateKey = vm.envUint("TESTNET_KEY");
-            owner = 0xF332533bF5d0aC462DC8511067A8122b4DcE2B57;
-        } else {
+        if (chainId != 1) {
             revert ChainIdInvalid(chainId);
         }
 
+        uint256 deployerPrivateKey = vm.envUint("MAINNET_KEY");
+        address owner = 0xB5a9e5a319c7fDa551a30BE592c77394bF935c6f;
+
         vm.startBroadcast(deployerPrivateKey);
 
-        if (chainId == 1) {
-            IMMUTABLE_CREATE2_FACTORY.safeCreate2({
-                salt: vm.envBytes32("TRANSFER_MANAGER_SALT"),
-                initializationCode: abi.encodePacked(type(TransferManager).creationCode, abi.encode(owner))
-            });
-        } else {
-            new TransferManager(owner);
-        }
+        IMMUTABLE_CREATE2_FACTORY.safeCreate2({
+            salt: vm.envBytes32("TRANSFER_MANAGER_SALT"),
+            initializationCode: abi.encodePacked(type(TransferManager).creationCode, abi.encode(owner))
+        });
 
         vm.stopBroadcast();
     }

@@ -197,4 +197,10 @@ interface ITransferManager {
      * @dev Only callable by owner.
      */
     function removeOperator(address operator) external;
+
+    /**
+     * @notice This returns whether the user has approved the operator address.
+     * The first address is the user and the second address is the operator.
+     */
+    function hasUserApprovedOperator(address user, address operator) external view returns (bool);
 }

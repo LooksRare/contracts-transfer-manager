@@ -30,17 +30,17 @@ contract Deployment is Script {
     function run() external {
         uint256 chainId = block.chainid;
 
-        if (chainId != 1) {
+        if (chainId != 1 && chainId != 42161) {
             revert ChainIdInvalid(chainId);
         }
 
         uint256 deployerPrivateKey = vm.envUint("MAINNET_KEY");
-        address owner = 0xB5a9e5a319c7fDa551a30BE592c77394bF935c6f;
+        address owner = 0x3ab105F0e4A22ec4A96a9b0Ca90c5C534d21f3a7;
 
         vm.startBroadcast(deployerPrivateKey);
 
         IMMUTABLE_CREATE2_FACTORY.safeCreate2({
-            salt: vm.envBytes32("TRANSFER_MANAGER_SALT"),
+            salt: vm.envBytes32("ARBITRUM_TRANSFER_MANAGER_SALT"),
             initializationCode: abi.encodePacked(type(TransferManager).creationCode, abi.encode(owner))
         });
 

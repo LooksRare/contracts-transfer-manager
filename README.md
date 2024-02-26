@@ -15,6 +15,6 @@ This project contains the smart contracts used for LooksRare's transfer manager.
 | Arbitrum         | [0x0000000000a3573e1cafe02fe1c3ac48473c9332](https://arbiscan.io/address/0x0000000000a3573e1cafe02fe1c3ac48473c9332)          |
 | Base             | [0x0000000000a3573e1cafe02fe1c3ac48473c9332](https://basescan.org/address/0x0000000000a3573e1cafe02fe1c3ac48473c9332)         |
 | Arbitrum Sepolia | [0x21D44Cd218895d08bB57E2161A5c8De1CE898165](https://sepolia.arbiscan.io/address/0x21D44Cd218895d08bB57E2161A5c8De1CE898165)  |
-| Blast Sepolia    | [0x198fFfc1aC8A8D7841a1b8A6acBc4e7B8EeA6879](https://testnet.blastscan.io/address/0x198fFfc1aC8A8D7841a1b8A6acBc4e7B8EeA6879) |
+| Blast Sepolia    | [0xFD1DcA440E83FF9A1AED83e0f2D4b3EE85Cc2d44](https://testnet.blastscan.io/address/0xFD1DcA440E83FF9A1AED83e0f2D4b3EE85Cc2d44) |
 | Goerli           | [0xb737687983D6CcB4003A727318B5454864Ecba9d](https://goerli.etherscan.io/address/0xb737687983D6CcB4003A727318B5454864Ecba9d)  |
 | Sepolia          | [0x8B43b6C4601FaCF70Fe17D057b3912Bde0206CFB](https://sepolia.etherscan.io/address/0x8B43b6C4601FaCF70Fe17D057b3912Bde0206CFB) |

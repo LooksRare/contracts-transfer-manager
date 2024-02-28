@@ -35,10 +35,10 @@ contract Deployment is Script {
 
         vm.startBroadcast(deployerPrivateKey);
 
-        IMMUTABLE_CREATE2_FACTORY.safeCreate2({
-            salt: vm.envBytes32("BLAST_TRANSFER_MANAGER_SALT"),
-            initializationCode: abi.encodePacked(type(TransferManager).creationCode, abi.encode(owner, blast))
-        });
+        IMMUTABLE_CREATE2_FACTORY.findCreate2Address(
+            vm.envBytes32("BLAST_TRANSFER_MANAGER_SALT"),
+            abi.encodePacked(type(BlastTransferManager).creationCode, abi.encode(owner, blast))
+        );
 
         vm.stopBroadcast();
     }

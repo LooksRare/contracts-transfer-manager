@@ -22,7 +22,7 @@ import {TokenType} from "./enums/TokenType.sol";
  *         Token type "2" refers to ERC1155 transfer functions.
  * @dev "Safe" transfer functions for ERC721 are not implemented since they come with added gas costs
  *       to verify if the recipient is a contract as it requires verifying the receiver interface is valid.
- * @author LooksRare protocol team (👀,💎)
+ * @author YOLO Games protocol team
  */
 contract TransferManager is
     ITransferManager,

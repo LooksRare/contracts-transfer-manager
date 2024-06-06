@@ -6,9 +6,12 @@ import {Script} from "../../lib/forge-std/src/Script.sol";
 
 // Core contracts
 import {TransferManager} from "../../contracts/TransferManager.sol";
+import {BlastTransferManager} from "../../contracts/BlastTransferManager.sol";
 
 // Create2 factory interface
 import {IImmutableCreate2Factory} from "../../contracts/interfaces/IImmutableCreate2Factory.sol";
+
+import {console2} from "forge-std/console2.sol";
 
 /**
  * @dev
@@ -25,24 +28,17 @@ contract Deployment is Script {
     IImmutableCreate2Factory private constant IMMUTABLE_CREATE2_FACTORY =
         IImmutableCreate2Factory(0x0000000000FFe8B47B3e2130213B802212439497);
 
-    error ChainIdInvalid(uint256 chainId);
-
     function run() external {
-        uint256 chainId = block.chainid;
-
-        if (chainId != 1 && chainId != 42161) {
-            revert ChainIdInvalid(chainId);
-        }
-
-        uint256 deployerPrivateKey = vm.envUint("MAINNET_KEY");
-        address owner = 0x3ab105F0e4A22ec4A96a9b0Ca90c5C534d21f3a7;
+        uint256 deployerPrivateKey = vm.envUint("BLAST_MAINNET_KEY");
+        address owner = 0x2C64e6Ee1Dd9Fc2a0Db6a6B1aa2c3f163C7A2C78;
+        address blast = 0x4300000000000000000000000000000000000002;
 
         vm.startBroadcast(deployerPrivateKey);
 
-        IMMUTABLE_CREATE2_FACTORY.safeCreate2({
-            salt: vm.envBytes32("ARBITRUM_TRANSFER_MANAGER_SALT"),
-            initializationCode: abi.encodePacked(type(TransferManager).creationCode, abi.encode(owner))
-        });
+        IMMUTABLE_CREATE2_FACTORY.findCreate2Address(
+            vm.envBytes32("BLAST_TRANSFER_MANAGER_SALT"),
+            abi.encodePacked(type(BlastTransferManager).creationCode, abi.encode(owner, blast))
+        );
 
         vm.stopBroadcast();
     }

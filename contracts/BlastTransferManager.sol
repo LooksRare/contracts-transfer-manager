@@ -13,7 +13,7 @@ import {IBlast, YieldMode, GasMode} from "./interfaces/IBlast.sol";
 /**
  * @title BlastTransferManager
  * @notice This contract provides the transfer functions for ERC20/ERC721/ERC1155 for contracts on Blast that require them.
- * @author YOLO Games protocol team
+ * @author LooksRare protocol team (👀,💎)
  */
 contract BlastTransferManager is TransferManager {
     /**

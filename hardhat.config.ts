@@ -33,8 +33,8 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.24",
-        settings: { viaIR: true, optimizer: { enabled: true, runs: 888888 } },
+        version: "0.8.20",
+        settings: { optimizer: { enabled: true, runs: 888888 } },
       },
     ],
   },

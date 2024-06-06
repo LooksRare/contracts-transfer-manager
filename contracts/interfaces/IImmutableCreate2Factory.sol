@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.20;
 
 interface IImmutableCreate2Factory {
     function hasBeenDeployed(address deploymentAddress) external returns (bool);

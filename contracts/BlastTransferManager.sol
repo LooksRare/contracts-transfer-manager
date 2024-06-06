@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import {OwnableTwoSteps} from "@looksrare/contracts-libs/contracts/OwnableTwoSteps.sol";
 import {TransferManager} from "./TransferManager.sol";
 import {IBlast, YieldMode, GasMode} from "./interfaces/IBlast.sol";
 

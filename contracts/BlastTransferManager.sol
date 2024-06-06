@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity 0.8.24;
 
 import {TransferManager} from "./TransferManager.sol";
 import {IBlast, YieldMode, GasMode} from "./interfaces/IBlast.sol";
